@@ -1,0 +1,204 @@
+version: '2'
+
+# ------------------------------------------------------------------------------
+# These images must be built in advance, or docker-compose will build them.
+# cd ~/dockerfiles/database/ol7_122
+# docker build -t ol7_122:latest .
+# 
+# cd ~/dockerfiles/ords/ol7_ords
+# docker build -t ol7_ords:latest .
+#
+# Run it.
+# cd ~/dockerfiles/compose/ol7_122_ords
+# docker-compose up
+# ------------------------------------------------------------------------------
+
+services:
+  # ORDS service
+  jenkinssrv:
+    build:
+      context: ./jenkins
+      dockerfile: Dockerfile
+#    depends_on:
+#      - dbservice
+#    image: jenkins:latest
+#    environment:
+#      - DB_HOSTNAME=dbservice
+#      - DB_PORT=1521
+#      - DB_SERVICE=pdb1
+#      - APEX_PUBLIC_USER_PASSWORD=ApexPassword1
+#      - APEX_TABLESPACE=APEX
+#      - TEMP_TABLESPACE=TEMP
+#      - APEX_LISTENER_PASSWORD=ApexPassword1
+#      - APEX_REST_PASSWORD=ApexPassword1
+#      - PUBLIC_PASSWORD=ApexPassword1
+#      - SYS_PASSWORD=SysPassword1
+#      - KEYSTORE_PASSWORD=KeystorePassword1
+    networks:
+      - backend
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+      - "22:22"
+
+  argocd:
+    build:
+      context: ./argocd
+      dockerfile: Dockerfile
+#    depends_on:
+#      - dbservice
+#    image: jenkins:latest
+#    environment:
+#      - DB_HOSTNAME=dbservice
+#      - DB_PORT=1521
+#      - DB_SERVICE=pdb1
+#      - APEX_PUBLIC_USER_PASSWORD=ApexPassword1
+#      - APEX_TABLESPACE=APEX
+#      - TEMP_TABLESPACE=TEMP
+#      - APEX_LISTENER_PASSWORD=ApexPassword1
+#      - APEX_REST_PASSWORD=ApexPassword1
+#      - PUBLIC_PASSWORD=ApexPassword1
+#      - SYS_PASSWORD=SysPassword1
+#      - KEYSTORE_PASSWORD=KeystorePassword1
+    networks:
+      - backend
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+      - "22:22"
+
+  gitlab:
+    build:
+      context: ./gitlab
+      dockerfile: Dockerfile
+#    depends_on:
+#      - dbservice
+#    image: jenkins:latest
+#    environment:
+#      - DB_HOSTNAME=dbservice
+#      - DB_PORT=1521
+#      - DB_SERVICE=pdb1
+#      - APEX_PUBLIC_USER_PASSWORD=ApexPassword1
+#      - APEX_TABLESPACE=APEX
+#      - TEMP_TABLESPACE=TEMP
+#      - APEX_LISTENER_PASSWORD=ApexPassword1
+#      - APEX_REST_PASSWORD=ApexPassword1
+#      - PUBLIC_PASSWORD=ApexPassword1
+#      - SYS_PASSWORD=SysPassword1
+#      - KEYSTORE_PASSWORD=KeystorePassword1
+    networks:
+      - backend
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+      - "22:22"
+
+  kuber:
+    build:
+      context: ./kuber
+      dockerfile: Dockerfile
+#    depends_on:
+#      - dbservice
+#    image: jenkins:latest
+#    environment:
+#      - DB_HOSTNAME=dbservice
+#      - DB_PORT=1521
+#      - DB_SERVICE=pdb1
+#      - APEX_PUBLIC_USER_PASSWORD=ApexPassword1
+#      - APEX_TABLESPACE=APEX
+#      - TEMP_TABLESPACE=TEMP
+#      - APEX_LISTENER_PASSWORD=ApexPassword1
+#      - APEX_REST_PASSWORD=ApexPassword1
+#      - PUBLIC_PASSWORD=ApexPassword1
+#      - SYS_PASSWORD=SysPassword1
+#      - KEYSTORE_PASSWORD=KeystorePassword1
+    networks:
+      - backend
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+      - "22:22"
+
+
+  nexus:
+    build:
+      context: ./nexus
+      dockerfile: Dockerfile
+#    depends_on:
+#      - dbservice
+#    image: jenkins:latest
+#    environment:
+#      - DB_HOSTNAME=dbservice
+#      - DB_PORT=1521
+#      - DB_SERVICE=pdb1
+#      - APEX_PUBLIC_USER_PASSWORD=ApexPassword1
+#      - APEX_TABLESPACE=APEX
+#      - TEMP_TABLESPACE=TEMP
+#      - APEX_LISTENER_PASSWORD=ApexPassword1
+#      - APEX_REST_PASSWORD=ApexPassword1
+#      - PUBLIC_PASSWORD=ApexPassword1
+#      - SYS_PASSWORD=SysPassword1
+#      - KEYSTORE_PASSWORD=KeystorePassword1
+    networks:
+      - backend
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+      - "22:22"
+
+
+  sonar:
+    build:
+      context: ./sonar
+      dockerfile: Dockerfile
+#    depends_on:
+#      - dbservice
+#    image: jenkins:latest
+#    environment:
+#      - DB_HOSTNAME=dbservice
+#      - DB_PORT=1521
+#      - DB_SERVICE=pdb1
+#      - APEX_PUBLIC_USER_PASSWORD=ApexPassword1
+#      - APEX_TABLESPACE=APEX
+#      - TEMP_TABLESPACE=TEMP
+#      - APEX_LISTENER_PASSWORD=ApexPassword1
+#      - APEX_REST_PASSWORD=ApexPassword1
+#      - PUBLIC_PASSWORD=ApexPassword1
+#      - SYS_PASSWORD=SysPassword1
+#      - KEYSTORE_PASSWORD=KeystorePassword1
+    networks:
+      - backend
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+      - "22:22"
+
+
+
+
+  # Oracle Database service
+  jenkinsagt:
+    build:
+      context: ./maven
+      dockerfile: Dockerfile
+#    image: maven:latest
+#    volumes:
+#      - db-data:/u02
+#    environment:
+#      - SYS_PASSWORD=SysPassword1
+#      - PDB_PASSWORD=PdbPassword1
+#      - APEX_EMAIL=me@example.com
+#      - APEX_PASSWORD=ApexPassword1
+    networks:
+      - backend
+    ports:
+      - "1521:1521"
+
+#volumes:
+#  db-data:
+  
+networks:
+  backend:
+    driver: bridge
+
+

@@ -1,0 +1,5 @@
+docker images --filter=reference='project*'
+
+docker rmi -f $(docker images -a -q)
+
+docker rmi -f $(docker images -a -q --filter=reference='project*')

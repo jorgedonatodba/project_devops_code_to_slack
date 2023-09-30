@@ -1,0 +1,94 @@
+dns/proxy
+jenkinssrv
+jenkinsagt/maven
+gitlab
+
+
+wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+sudo apt update && sudo apt install vagrant
+
+config.vm.network "public_network", bridge: "en1: Wi-Fi (AirPort)"
+
+
+--dns
+sudo apt install bind9 bind9utils bind9-doc
+
+
+
+--nexus
+sudo apt update
+sudo apt upgrade
+sudo bash
+wget -O - https://packages.adoptium.net/artifactory/api/gpg/key/public | tee /etc/apt/keyrings/adoptium.asc
+echo "deb [signed-by=/etc/apt/keyrings/adoptium.asc] https://packages.adoptium.net/artifactory/deb $(awk -F= '/^VERSION_CODENAME/{print$2}' /etc/os-release) main" | tee /etc/apt/sources.list.d/adoptium.list
+
+apt update
+apt install temurin-8-jdk
+/usr/bin/java -version
+
+wget https://download.sonatype.com/nexus/3/nexus-3.49.0-02-unix.tar.gz
+sudo tar -xzvf nexus-3.49.0-02-unix.tar.gz -C /opt
+cd /opt
+sudo mv nexus-3.49.0-02 nexus
+sudo adduser nexus
+--pass: nexus
+sudo chown -R nexus:nexus /opt/nexus
+sudo chown -R nexus:nexus /opt/sonatype-work
+
+sudo vi /opt/nexus/bin/nexus.rc
+Uncomment #run_as_user= and modify to set nexus as user. It should read run_as_user=”nexus”
+
+sudo vi /etc/systemd/system/nexus.service
+
+[Unit]
+Description=nexus service
+After=network.target
+
+[Service]
+Type=forking
+LimitNOFILE=65536
+User=nexus
+Group=nexus
+ExecStart=/opt/nexus/bin/nexus start
+ExecStop=/opt/nexus/bin/nexus stop
+User=nexus
+Restart=on-abort
+[Install]
+WantedBy=multi-user.target
+
+sudo systemctl enable nexus
+
+sudo systemctl start nexus
+
+sudo systemctl status nexus
+
+
+tail -f /opt/sonatype-work/nexus3/log/nexus.log
+
+Wait until you see Nexus3 has started, you should see something like below
+
+Started @50347ms
+2023-03-14 13:36:15,995+0000 INFO  [jetty-main-1]  *SYSTEM org.sonatype.nexus.bootstrap.jetty.JettyServer -
+-------------------------------------------------
+
+Started Sonatype Nexus OSS 3.49.0-02
+
+-------------------------------------------------
+
+
+Access User Interface
+
+Once Nexus is successfully installed, you can access it in the browser by
+
+http://IP_Address:8081
+
+You can obtain the initial password by issuing the following command:
+
+cat /opt/sonatype-work/nexus3/admin.password
+
+Configure Nexus Docker Hosted Registry from the User Interface
+In the example below we are assuming a docker hosted registry
+was created on port 1111
+
+0a25a190-728a-44ca-9037-5b61d514bbb9

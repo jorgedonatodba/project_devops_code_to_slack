@@ -1,0 +1,82 @@
+version: '2'
+
+# ------------------------------------------------------------------------------
+# These images must be built in advance, or docker-compose will build them.
+# cd ~/dockerfiles/database/ol7_122
+# docker build -t ol7_122:latest .
+# 
+# cd ~/dockerfiles/ords/ol7_ords
+# docker build -t ol7_ords:latest .
+#
+# Run it.
+# cd ~/dockerfiles/compose/ol7_122_ords
+# docker-compose up
+# ------------------------------------------------------------------------------
+
+services:
+  # ORDS service
+  dns:
+    build:
+      context: ./dns_proxy
+      dockerfile: Dockerfile
+#    depends_on:
+#      - dbservice
+    image: ubuntu:22.04
+    container_name: dns
+#    tty: true
+#    environment:
+#      - DB_HOSTNAME=dbservice
+#      - DB_PORT=1521
+#      - DB_SERVICE=pdb1
+#      - APEX_PUBLIC_USER_PASSWORD=ApexPassword1
+#      - APEX_TABLESPACE=APEX
+#      - TEMP_TABLESPACE=TEMP
+#      - APEX_LISTENER_PASSWORD=ApexPassword1
+#      - APEX_REST_PASSWORD=ApexPassword1
+#      - PUBLIC_PASSWORD=ApexPassword1
+#      - SYS_PASSWORD=SysPassword1
+#      - KEYSTORE_PASSWORD=KeystorePassword1
+    networks:
+      - backend
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+      - "22:22"
+      - "80:80"
+
+  argocd:
+    build:
+      context: ./argocd
+      dockerfile: Dockerfile
+#    depends_on:
+#      - dbservice
+    image: ubuntu:22.04
+    container_name: argocd
+#    tty: true
+#    environment:
+#      - DB_HOSTNAME=dbservice
+#      - DB_PORT=1521
+#      - DB_SERVICE=pdb1
+#      - APEX_PUBLIC_USER_PASSWORD=ApexPassword1
+#      - APEX_TABLESPACE=APEX
+#      - TEMP_TABLESPACE=TEMP
+#      - APEX_LISTENER_PASSWORD=ApexPassword1
+#      - APEX_REST_PASSWORD=ApexPassword1
+#      - PUBLIC_PASSWORD=ApexPassword1
+#      - SYS_PASSWORD=SysPassword1
+#      - KEYSTORE_PASSWORD=KeystorePassword1
+    networks:
+      - backend
+    ports:
+     # - "8080:8080"
+    #  - "8443:8443"
+      - "2222:22"
+
+#volumes:
+#  db-data:
+  
+networks:
+  backend:
+    driver: bridge
+
+
