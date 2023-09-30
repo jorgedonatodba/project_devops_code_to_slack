@@ -1,0 +1,42 @@
+sudo nano /etc/default/named
+
+Add -4 to the end of the OPTIONS parameter:
+/etc/default/named
+
+. . .
+OPTIONS="-u bind -4"
+
+
+sudo nano /etc/bind/named.conf.options
+
+acl "trusted" {
+        192.168.1.248;    # ns1 
+        #10.128.20.12;    # ns2
+        192.168.1.249;    # nexus
+        192.168.1.251;    # gitlab
+        192.168.1.252;    # jenkinssrv
+        192.168.1.253;    # jenkinsagt
+        192.168.1.254;    # argocd
+        192.168.1.255;    # kuber
+};
+
+options {
+
+        directory "/var/cache/bind";
+        
+        recursion yes;                 # enables recursive queries
+        allow-recursion { trusted; };  # allows recursive queries from "trusted" clients
+        listen-on { 10.128.10.11; };   # ns1 private IP address - listen on private network only
+        allow-transfer { none; };      # disable zone transfers by default
+
+        forwarders {
+                8.8.8.8;
+                8.8.4.4;
+        };
+
+        dnssec-validation auto;
+
+        listen-on-v6 { any; };
+
+
+};
